@@ -1,32 +1,20 @@
-#include "hphp/runtime/base/base-includes.h"
-namespace HPHP {
-const StaticString s_Mongo("Mongo");
+<?hh
+/**
+ * Deserializes a BSON object into a PHP array
+ *
+ * @param string $bson - The BSON to be deserialized.
+ *
+ * @return array - Returns the deserialized BSON object.
+ */
+<<__Native>>
+function bson_decode(string $bson): array;
 
-//////////////////////////////////////////////////////////////////////////////
-// functions
-
-static Array HHVM_FUNCTION(bson_decode, const String& bson) {
-  throw NotImplementedException("bson_decode");
-}
-
-static String HHVM_FUNCTION(bson_encode, const Variant& anything) {
-  throw NotImplementedException("bson_encode");
-}
-
-//////////////////////////////////////////////////////////////////////////////
-
-class mongoExtension : public Extension {
- public:
-  mongoExtension() : Extension("mongo") {}
-  virtual void moduleInit() {
-    HHVM_FE(bson_decode);
-    HHVM_FE(bson_encode);
-    loadSystemlib();
-  }
-} s_mongo_extension;
-
-// Uncomment for non-bundled module
-//HHVM_GET_MODULE(mongo);
-
-//////////////////////////////////////////////////////////////////////////////
-} // namespace HPHP
+/**
+ * Serializes a PHP variable into a BSON string
+ *
+ * @param mixed $anything - The variable to be serialized.
+ *
+ * @return string - Returns the serialized string.
+ */
+<<__Native>>
+function bson_encode(mixed $anything): string;
