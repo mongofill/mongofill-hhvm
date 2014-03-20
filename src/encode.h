@@ -17,6 +17,14 @@ void mongoDateToBSON(const Object& value, const char* key, bson_t* bson);
 void mongoIdToBSON(const Object& value, const char* key, bson_t* bson);
 void mongoRegexToBSON(const Object& value, const char* key, bson_t* bson);
 void mongoTimestampToBSON(const Object& value, const char* key, bson_t* bson);
+void mongoCodeToBSON(const Object& value, const char* key, bson_t* bson);
+void mongoBinDataToBSON(const Object& value, const char* key, bson_t* bson);
+void mongoInt32ToBSON(const Object& value, const char* key, bson_t* bson);
+void mongoInt64ToBSON(const Object& value, const char* key, bson_t* bson);
+void mongoMinKeyToBSON(const Object& value, const char* key, bson_t* bson);
+void mongoMaxKeyToBSON(const Object& value, const char* key, bson_t* bson);
+
+
 
 
 

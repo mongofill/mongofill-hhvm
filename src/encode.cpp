@@ -10,6 +10,12 @@ const StaticString s_MongoDate("MongoDate");
 const StaticString s_MongoId("MongoId");
 const StaticString s_MongoRegex("MongoRegex");
 const StaticString s_MongoTimestamp("MongoTimestamp");
+const StaticString s_MongoCode("MongoCode");
+const StaticString s_MongoBinData("MongoBinData");
+const StaticString s_MongoInt32("MongoInt32");
+const StaticString s_MongoInt64("MongoInt64");
+const StaticString s_MongoMaxKey("MongoMaxKey");
+const StaticString s_MongoMinKey("MongoMinKey");
 
 void fillBSONWithArray(const Array& value, bson_t* bson) {
   for (ArrayIter iter(value); iter; ++iter) {
@@ -46,50 +52,6 @@ void variantToBSON(const Variant& value, const char* key, bson_t* bson) {
         objectToBSON(value.toObject(), key, bson);
         break;
   }
-}
-
-void objectToBSON(const Object& value, const char* key, bson_t* bson) {
-  const String& className = value->o_getClassName();
-
-  if (className == s_MongoId) {
-    mongoIdToBSON(value, key, bson);
-  } else if (className == s_MongoDate) {
-    mongoDateToBSON(value, key, bson);
-  } else if (className == s_MongoRegex) {
-    mongoRegexToBSON(value, key, bson);
-  } else if (className == s_MongoTimestamp) {
-    mongoTimestampToBSON(value, key, bson);
-  } else {
-    printf("%s\n", value->o_getClassName().c_str());
-  }
-}
-
-void mongoTimestampToBSON(const Object& value, const char* key, bson_t* bson) {
-    bson_append_timestamp(bson, key, -1,
-      value->o_get("sec").toInt64(),
-      value->o_get("inc").toInt64()
-    );
-}
-
-void mongoRegexToBSON(const Object& value, const char* key, bson_t* bson) {
-    bson_append_regex(bson, key, -1,
-      value->o_get("regex").toString().c_str(),
-      value->o_get("flags").toString().c_str()
-    );
-}
-
-void mongoIdToBSON(const Object& value, const char* key, bson_t* bson) {
-    bson_oid_t oid;
-    bson_oid_init_from_string(&oid, value->o_get("$id").toString().c_str());
-    bson_append_oid(bson, key, -1, &oid);
-}
-
-void mongoDateToBSON(const Object& value, const char* key, bson_t* bson) {
-    int64_t mili = 
-      (value->o_get("sec").toInt64() * 1000) + 
-      (value->o_get("usec").toInt64() / 1000);
-
-    bson_append_date_time(bson, key, -1, mili);
 }
 
 void arrayToBSON(const Array& value, const char* key, bson_t* bson) {
@@ -130,6 +92,105 @@ void stringToBSON(const String& value, const char* key, bson_t* bson) {
   bson_append_utf8(bson, key, strlen(key), value.c_str(), -1);
 }
 
+
+void objectToBSON(const Object& value, const char* key, bson_t* bson) {
+  const String& className = value->o_getClassName();
+
+  if (className == s_MongoId) {
+    mongoIdToBSON(value, key, bson);
+  } else if (className == s_MongoDate) {
+    mongoDateToBSON(value, key, bson);
+  } else if (className == s_MongoRegex) {
+    mongoRegexToBSON(value, key, bson);
+  } else if (className == s_MongoTimestamp) {
+    mongoTimestampToBSON(value, key, bson);
+  } else if (className == s_MongoCode) {
+    mongoCodeToBSON(value, key, bson);
+  } else if (className == s_MongoBinData) {
+    mongoBinDataToBSON(value, key, bson);
+  } else if (className == s_MongoInt32) {
+    mongoInt32ToBSON(value, key, bson);
+  } else if (className == s_MongoInt64) {
+    mongoInt64ToBSON(value, key, bson);
+  } else if (className == s_MongoMaxKey) {
+    mongoMinKeyToBSON(value, key, bson);
+  } else if (className == s_MongoMinKey) {
+    mongoMaxKeyToBSON(value, key, bson);
+  } else {
+    printf("%s\n", value->o_getClassName().c_str());
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void mongoTimestampToBSON(const Object& value, const char* key, bson_t* bson) {
+    bson_append_timestamp(bson, key, -1,
+      value->o_get("sec").toInt64(),
+      value->o_get("inc").toInt64()
+    );
+}
+
+void mongoRegexToBSON(const Object& value, const char* key, bson_t* bson) {
+    bson_append_regex(bson, key, -1,
+      value->o_get("regex").toString().c_str(),
+      value->o_get("flags").toString().c_str()
+    );
+}
+
+void mongoIdToBSON(const Object& value, const char* key, bson_t* bson) {
+    bson_oid_t oid;
+    bson_oid_init_from_string(&oid, value->o_get("$id").toString().c_str());
+    bson_append_oid(bson, key, -1, &oid);
+}
+
+void mongoDateToBSON(const Object& value, const char* key, bson_t* bson) {
+    int64_t mili = 
+      (value->o_get("sec").toInt64() * 1000) + 
+      (value->o_get("usec").toInt64() / 1000);
+
+    bson_append_date_time(bson, key, -1, mili);
+}
+
+void mongoCodeToBSON(const Object& value, const char* key, bson_t* bson) {
+  bson_t child;
+  bson_init(&child);
+  fillBSONWithArray(
+    value->o_get("scope", true, s_MongoCode.get()).toArray(),
+    &child 
+  );
+  
+  bson_append_code_with_scope(bson, key, -1,
+    value->o_get("code", true, s_MongoCode.get()).toString().c_str(),
+    &child
+  );
+}
+
+void mongoBinDataToBSON(const Object& value, const char* key, bson_t* bson) {
+  const String& binary = value->o_get("bin").toString();
+  
+  bson_append_binary(bson, key, -1, 
+    (bson_subtype_t) value->o_get("type").toInt32(),
+    (const uint8_t*) binary.c_str(), 
+    binary.size()
+  );
+}
+
+void mongoInt32ToBSON(const Object& value, const char* key, bson_t* bson) {
+
+}
+
+void mongoInt64ToBSON(const Object& value, const char* key, bson_t* bson) {
+
+}
+
+void mongoMinKeyToBSON(const Object& value, const char* key, bson_t* bson) {
+
+}
+void mongoMaxKeyToBSON(const Object& value, const char* key, bson_t* bson) {
+  
+}
+
+//////////////////////////////////////////////////////////////////////////////
 bool arrayIsDocument(const Array& arr) {
   int64_t max_index = 0;
 
