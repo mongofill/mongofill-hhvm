@@ -1,8 +1,15 @@
 #include "hphp/runtime/base/base-includes.h"
-#include <bson.h>
 #include "encode.h"
+#include <bson.h>
+
+#include <stdlib.h>
+#include <stdio.h>
 
 namespace HPHP {
+const StaticString s_MongoDate("MongoDate");
+const StaticString s_MongoId("MongoId");
+const StaticString s_MongoRegex("MongoRegex");
+const StaticString s_MongoTimestamp("MongoTimestamp");
 
 void fillBSONWithArray(const Array& value, bson_t* bson) {
   for (ArrayIter iter(value); iter; ++iter) {
@@ -34,12 +41,56 @@ void variantToBSON(const Variant& value, const char* key, bson_t* bson) {
         break;
       case KindOfArray:
         arrayToBSON(value.toArray(), key, bson);
-        break;  
-      default:
-        throw NotImplementedException("bson_decode");
+        break;
+      case KindOfObject:
+        objectToBSON(value.toObject(), key, bson);
+        break;
   }
 }
 
+void objectToBSON(const Object& value, const char* key, bson_t* bson) {
+  const String& className = value->o_getClassName();
+
+  if (className == s_MongoId) {
+    mongoIdToBSON(value, key, bson);
+  } else if (className == s_MongoDate) {
+    mongoDateToBSON(value, key, bson);
+  } else if (className == s_MongoRegex) {
+    mongoRegexToBSON(value, key, bson);
+  } else if (className == s_MongoTimestamp) {
+    mongoTimestampToBSON(value, key, bson);
+  } else {
+    printf("%s\n", value->o_getClassName().c_str());
+  }
+}
+
+void mongoTimestampToBSON(const Object& value, const char* key, bson_t* bson) {
+    bson_append_timestamp(bson, key, -1,
+      value->o_get("sec").toInt64(),
+      value->o_get("inc").toInt64()
+    );
+}
+
+void mongoRegexToBSON(const Object& value, const char* key, bson_t* bson) {
+    bson_append_regex(bson, key, -1,
+      value->o_get("regex").toString().c_str(),
+      value->o_get("flags").toString().c_str()
+    );
+}
+
+void mongoIdToBSON(const Object& value, const char* key, bson_t* bson) {
+    bson_oid_t oid;
+    bson_oid_init_from_string(&oid, value->o_get("$id").toString().c_str());
+    bson_append_oid(bson, key, -1, &oid);
+}
+
+void mongoDateToBSON(const Object& value, const char* key, bson_t* bson) {
+    int64_t mili = 
+      (value->o_get("sec").toInt64() * 1000) + 
+      (value->o_get("usec").toInt64() / 1000);
+
+    bson_append_date_time(bson, key, -1, mili);
+}
 
 void arrayToBSON(const Array& value, const char* key, bson_t* bson) {
   bson_t child;
