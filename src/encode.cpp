@@ -1,22 +1,9 @@
 #include "hphp/runtime/base/base-includes.h"
-#include "encode.h"
 #include <bson.h>
-
-#include <stdlib.h>
-#include <stdio.h>
+#include "encode.h"
+#include "classes.h"
 
 namespace HPHP {
-const StaticString s_MongoDate("MongoDate");
-const StaticString s_MongoId("MongoId");
-const StaticString s_MongoRegex("MongoRegex");
-const StaticString s_MongoTimestamp("MongoTimestamp");
-const StaticString s_MongoCode("MongoCode");
-const StaticString s_MongoBinData("MongoBinData");
-const StaticString s_MongoInt32("MongoInt32");
-const StaticString s_MongoInt64("MongoInt64");
-const StaticString s_MongoMaxKey("MongoMaxKey");
-const StaticString s_MongoMinKey("MongoMinKey");
-
 void fillBSONWithArray(const Array& value, bson_t* bson) {
   for (ArrayIter iter(value); iter; ++iter) {
       Variant key(iter.first());
@@ -85,7 +72,7 @@ void boolToBSON(const bool value, const char* key, bson_t* bson) {
 }
 
 void int64ToBSON(const int64_t value, const char* key, bson_t* bson) {
-  bson_append_int32(bson, key, -1, value);
+  bson_append_int64(bson, key, -1, value);
 }
 
 void stringToBSON(const String& value, const char* key, bson_t* bson) {
@@ -167,7 +154,7 @@ void mongoCodeToBSON(const Object& value, const char* key, bson_t* bson) {
 
 void mongoBinDataToBSON(const Object& value, const char* key, bson_t* bson) {
   const String& binary = value->o_get("bin").toString();
-  
+
   bson_append_binary(bson, key, -1, 
     (bson_subtype_t) value->o_get("type").toInt32(),
     (const uint8_t*) binary.c_str(), 

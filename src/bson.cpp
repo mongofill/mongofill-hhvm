@@ -1,18 +1,27 @@
 #include "hphp/runtime/base/base-includes.h"
 #include <bson.h>
 #include "encode.h"
-
-//#include <stdlib.h>
-//#include <stdio.h>
+#include "decode.h"
 
 namespace HPHP {
-const StaticString s_Mongo("Mongo");
-
 //////////////////////////////////////////////////////////////////////////////
 // functions
 
-static Array HHVM_FUNCTION(bson_decode, const String& anything) {
-  throw NotImplementedException("bson_decode");
+static Array HHVM_FUNCTION(bson_decode, const String& bson) {
+  bson_reader_t * reader;
+  const bson_t * bsonObj;
+  bool reached_eof;
+
+  Array output = Array();
+
+  reader = bson_reader_new_from_data((uint8_t *)bson.c_str(), bson.size());
+  while ((bsonObj = bson_reader_read(reader, &reached_eof))) {
+    bsonToVariant(bsonObj, &output);
+  }
+
+  bson_reader_destroy(reader);
+
+  return output;
 }
 
 static String HHVM_FUNCTION(bson_encode, const Variant& anything) {
@@ -21,14 +30,7 @@ static String HHVM_FUNCTION(bson_encode, const Variant& anything) {
         
   fillBSONWithArray(anything.toArray(), &bson);
 
-  /*
-  char* str = bson_as_json(&bson, NULL);
-  fprintf(stdout, "%s\n", str);
-  bson_free(str);
-  */
-
-  const char* output = (const char*) bson_get_data(&bson);
-        
+  const char* output = (const char*) bson_get_data(&bson);        
   return String(output, bson.len, CopyString);
 }
 
