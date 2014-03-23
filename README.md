@@ -1,4 +1,4 @@
-BSON for the HipHop PHP Virtual Machine
+BSON for the HHVM
 ==============================
 
 bson_encode and bson_decode functions for HHVM, a wrapper of libbson library
@@ -24,7 +24,7 @@ DynamicExtensions {
 }
 ```
 
-Functions
+[Functions](https://github.com/mcuadros/bson-hni/blob/master/src/bson.php)
 --------
 
 - ```bson_encode``` — Serializes a PHP variable into a BSON string
