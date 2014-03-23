@@ -11,4 +11,12 @@ void bsonToNull(bson_iter_t* iter, Array* output);
 void bsonToDouble(bson_iter_t* iter, Array* output);
 void bsonToArray(bson_iter_t* iter, Array* output, bool isDocument);
 void bsonToMongoId(bson_iter_t* iter, Array* output);
+void bsonToMongoDate(bson_iter_t* iter, Array* output);
+void bsonToMongoRegexp(bson_iter_t* iter, Array* output);
+void bsonToMongoTimestamp(bson_iter_t* iter, Array* output);
+void bsonToMongoCode(bson_iter_t* iter, Array* output);
+void bsonToMongoCodeWithScope(bson_iter_t* iter, Array* output);
+void bsonToMongoBinData(bson_iter_t* iter, Array* output);
+void bsonToMongoMaxKey(bson_iter_t* iter, Array* output);
+void bsonToMongoMinKey(bson_iter_t* iter, Array* output);
 }

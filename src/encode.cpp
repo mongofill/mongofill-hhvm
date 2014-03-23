@@ -16,28 +16,30 @@ void fillBSONWithArray(const Array& value, bson_t* bson) {
 void variantToBSON(const Variant& value, const char* key, bson_t* bson) {
   switch(value.getType()) {
     case KindOfUninit:
-      case KindOfNull:
-        nullToBSON(key, bson);
-        break;
-      case KindOfBoolean:
-        boolToBSON(value.toBoolean(), key, bson);
-        break;
-      case KindOfInt64:
-        int64ToBSON(value.toInt64(), key, bson);
-        break;
-      case KindOfDouble:
-        doubleToBSON(value.toDouble(), key, bson);
-        break;
-      case KindOfStaticString:
-      case KindOfString:
-        stringToBSON(value.toString(), key, bson);
-        break;
-      case KindOfArray:
-        arrayToBSON(value.toArray(), key, bson);
-        break;
-      case KindOfObject:
-        objectToBSON(value.toObject(), key, bson);
-        break;
+    case KindOfNull:
+      nullToBSON(key, bson);
+      break;
+    case KindOfBoolean:
+      boolToBSON(value.toBoolean(), key, bson);
+      break;
+    case KindOfInt64:
+      int64ToBSON(value.toInt64(), key, bson);
+      break;
+    case KindOfDouble:
+      doubleToBSON(value.toDouble(), key, bson);
+      break;
+    case KindOfStaticString:
+    case KindOfString:
+      stringToBSON(value.toString(), key, bson);
+      break;
+    case KindOfArray:
+      arrayToBSON(value.toArray(), key, bson);
+      break;
+    case KindOfObject:
+      objectToBSON(value.toObject(), key, bson);
+      break;
+    default:
+      break;
   }
 }
 
@@ -100,11 +102,11 @@ void objectToBSON(const Object& value, const char* key, bson_t* bson) {
   } else if (className == s_MongoInt64) {
     mongoInt64ToBSON(value, key, bson);
   } else if (className == s_MongoMaxKey) {
-    mongoMinKeyToBSON(value, key, bson);
+    mongoMaxKeyToBSON(key, bson);
   } else if (className == s_MongoMinKey) {
-    mongoMaxKeyToBSON(value, key, bson);
+    mongoMinKeyToBSON(key, bson);
   } else {
-    printf("%s\n", value->o_getClassName().c_str());
+    arrayToBSON(value.toArray(), key, bson);
   }
 }
 
@@ -163,21 +165,23 @@ void mongoBinDataToBSON(const Object& value, const char* key, bson_t* bson) {
 }
 
 void mongoInt32ToBSON(const Object& value, const char* key, bson_t* bson) {
-
+  bson_append_int32(bson, key, -1, value->o_get("value").toInt32());
 }
 
 void mongoInt64ToBSON(const Object& value, const char* key, bson_t* bson) {
-
+  bson_append_int64(bson, key, -1, value->o_get("value").toInt64());
 }
 
-void mongoMinKeyToBSON(const Object& value, const char* key, bson_t* bson) {
-
+void mongoMinKeyToBSON(const char* key, bson_t* bson) {
+  bson_append_minkey(bson, key, -1);
 }
-void mongoMaxKeyToBSON(const Object& value, const char* key, bson_t* bson) {
-  
+
+void mongoMaxKeyToBSON(const char* key, bson_t* bson) {
+  bson_append_maxkey(bson, key, -1);
 }
 
 //////////////////////////////////////////////////////////////////////////////
+//* Objects *//
 bool arrayIsDocument(const Array& arr) {
   int64_t max_index = 0;
 
