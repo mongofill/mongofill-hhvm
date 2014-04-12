@@ -18,3 +18,4 @@ CMakeFiles/
 CMakeLists.txt
 Makefile
 cmake_install.cmake
+src/ext_mongo.php
