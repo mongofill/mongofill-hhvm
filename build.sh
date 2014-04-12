@@ -1,10 +1,7 @@
 #! /bin/sh
+: ${HPHP_HOME?"HPHP_HOME environment variable must be set!"}
 
-if [[ "$HPHP_HOME" == "" ]]; then
-    echo HPHP_HOME environment variable must be set!
-    exit 1
-fi
-
+hhvm tools/merge.php
 $HPHP_HOME/hphp/tools/hphpize/hphpize
 cmake .
 make

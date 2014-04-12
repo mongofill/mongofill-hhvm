@@ -70,7 +70,7 @@ static String HHVM_FUNCTION(bson_encode_multiple, const Array& documents) {
 
 class mongoExtension : public Extension {
  public:
-  mongoExtension() : Extension("mongo") {}
+  mongoExtension() : Extension("mongo", "1.4.5") {}
   virtual void moduleInit() {
     HHVM_FE(bson_decode);
     HHVM_FE(bson_encode);
