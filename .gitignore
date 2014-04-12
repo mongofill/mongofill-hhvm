@@ -11,3 +11,10 @@
 *.lai
 *.la
 *.a
+
+# hphpize and cmake files
+CMakeCache.txt
+CMakeFiles/
+CMakeLists.txt
+Makefile
+cmake_install.cmake
