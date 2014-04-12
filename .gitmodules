@@ -1,0 +1,3 @@
+[submodule "vendor/mongofill/mongofill"]
+	path = vendor/mongofill/mongofill
+	url = git://github.com/mongofill/mongofill
