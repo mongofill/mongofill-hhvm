@@ -12,7 +12,7 @@ ENDIF()
 
 include_directories(${BSON_INCLUDE_DIR})
 
-HHVM_EXTENSION(bson src/ext_mongo.cpp src/encode.cpp src/decode.cpp)
+HHVM_EXTENSION(bson src/bson.cpp src/encode.cpp src/decode.cpp)
 HHVM_SYSTEMLIB(bson src/ext_mongo.php)
 
 target_link_libraries(bson ${BSON_LIBRARY})
