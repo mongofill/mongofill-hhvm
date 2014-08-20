@@ -80,7 +80,7 @@ void bsonToArray(bson_iter_t* iter, Array* output, bool isDocument) {
 
   bson_init_static(&bson, document, document_len);
 
-  Array child = Array();
+  Array child = Array::Create();
   bsonToVariant(&bson, &child);
 
   output->add(
@@ -221,7 +221,7 @@ void bsonToMongoCodeWithScope(bson_iter_t* iter, Array* output) {
   bson_t bson;
   bson_init_static(&bson, scope, scope_len);
 
-  Array scopeArray = Array();
+  Array scopeArray = Array::Create();
   bsonToVariant(&bson, &scopeArray);
 
   bsonToObject(iter, output,
@@ -244,11 +244,11 @@ void bsonToMongoBinData(bson_iter_t* iter, Array* output) {
 }
 
 void bsonToMongoMaxKey(bson_iter_t* iter, Array* output) {
-  bsonToObject(iter, output, &s_MongoMaxKey, Array());
+  bsonToObject(iter, output, &s_MongoMaxKey, Array::Create());
 }
 
 void bsonToMongoMinKey(bson_iter_t* iter, Array* output) {
-  bsonToObject(iter, output, &s_MongoMinKey, Array());
+  bsonToObject(iter, output, &s_MongoMinKey, Array::Create());
 
 }
 }

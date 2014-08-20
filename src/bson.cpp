@@ -11,7 +11,7 @@ static Array HHVM_FUNCTION(bson_decode, const String& bson) {
   const bson_t * bsonObj;
   bool reached_eof;
 
-  Array output = Array();
+  Array output = Array::Create();
 
   reader = bson_reader_new_from_data((uint8_t *)bson.c_str(), bson.size());
   bsonObj = bson_reader_read(reader, &reached_eof);
@@ -28,11 +28,11 @@ static Array HHVM_FUNCTION(bson_decode_multiple, const String& bson) {
   bool reached_eof;
 
   int i = 0;
-  Array output = Array();
+  Array output = Array::Create();
 
   reader = bson_reader_new_from_data((uint8_t *)bson.c_str(), bson.size());
   while ((bsonObj = bson_reader_read(reader, &reached_eof))) {
-    Array document = Array();
+    Array document = Array::Create();
     bsonToVariant(bsonObj, &document);
     output.add(i++, document);
   }
