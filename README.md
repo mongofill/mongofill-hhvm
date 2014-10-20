@@ -27,10 +27,8 @@ This will produce a `mongo.so` file, the dynamically-loadable extension.
 To enable the extension, you need to have the following section in your hhvm config file
 
 ```
-DynamicExtensionPath = /path/to/hhvm/extensions
-DynamicExtensions {
-	* = mongo.so
-}
+hhvm.dynamic_extension_path = /path/to/hhvm/extensions
+hhvm.dynamic_extensions[mongo] = mongo.so
 ```
 
 Supported libraries
