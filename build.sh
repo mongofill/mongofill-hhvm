@@ -1,8 +1,6 @@
 #! /bin/sh
-: ${HPHP_HOME?"HPHP_HOME environment variable must be set!"}
-
 git submodule update --init
-$HPHP_HOME/hphp/hhvm/hhvm tools/merge.php
-$HPHP_HOME/hphp/tools/hphpize/hphpize
+hhvm tools/merge.php
+hphpize
 cmake .
 make

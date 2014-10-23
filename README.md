@@ -10,11 +10,11 @@ This HNI implementation is 3-5 times faster than the original mongofill extensio
 
 Building and Installation
 -------------------------
-Installation requires a copy of HHVM to be built from source on the local machine, instructions on how to do this are available on the [HHVM Wiki](https://github.com/facebook/hhvm/wiki ). 
+Installation requires hhvm-dev package to be installed. Alternatively a copy of HHVM can be built from source on the local machine; instructions on how to do this are available on the [HHVM Wiki](https://github.com/facebook/hhvm/wiki ). 
 
 The library [libbson](https://github.com/mongodb/libbson) is required to be installed in the system, you can follow the instructions in the libbson repository.
 
-Once done, the following commands will build the extension, assuming you've also installed HHVM.
+Once done, the following commands will build the extension.
 
 ```sh
 git clone https://github.com/mongofill/mongofill-hhvm
@@ -27,10 +27,8 @@ This will produce a `mongo.so` file, the dynamically-loadable extension.
 To enable the extension, you need to have the following section in your hhvm config file
 
 ```
-DynamicExtensionPath = /path/to/hhvm/extensions
-DynamicExtensions {
-	* = mongo.so
-}
+hhvm.dynamic_extension_path = /path/to/hhvm/extensions
+hhvm.dynamic_extensions[mongo] = mongo.so
 ```
 
 Supported libraries
