@@ -83,7 +83,7 @@ void stringToBSON(const String& value, const char* key, bson_t* bson) {
 
 
 void objectToBSON(const Object& value, const char* key, bson_t* bson) {
-  const String& className = value->o_getClassName();
+  const String& className = value->getClassName();
 
   if (className == s_MongoId) {
     mongoIdToBSON(value, key, bson);

@@ -1,4 +1,6 @@
 #include "hphp/runtime/base/base-includes.h"
+#include "hphp/runtime/base/execution-context.h"
+#include "hphp/runtime/base/array-init.h"
 #include <bson.h>
 #include "decode.h"
 #include "classes.h"
