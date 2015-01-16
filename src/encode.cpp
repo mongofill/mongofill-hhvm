@@ -83,7 +83,11 @@ void stringToBSON(const String& value, const char* key, bson_t* bson) {
 
 
 void objectToBSON(const Object& value, const char* key, bson_t* bson) {
+#if HHVM_API_VERSION >= 20150112L
   const String& className = value->getClassName();
+#else
+  const String& className = value->o_getClassName();
+#endif
 
   if (className == s_MongoId) {
     mongoIdToBSON(value, key, bson);
