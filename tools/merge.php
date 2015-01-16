@@ -3,6 +3,7 @@
 class Merger
 {
     private $excludedFiles;
+    private $globalNsOpen = false;
 
     public function __construct(array $paths, array $exclude, $filename)
     {
@@ -19,6 +20,7 @@ class Merger
     private function mergePHPFiles(array $files)
     {
         $code = '';
+
         foreach($files as $file) {
             $code .= PHP_EOL . $this->readCodeFromFile($file);
         }
@@ -34,8 +36,8 @@ class Merger
 
         $uses = array_unique($matches[0]);
             $code = str_replace($uses, '', $code);
-        
-        return implode(PHP_EOL, $uses) . PHP_EOL . $code;
+
+        return str_replace('namespace {', 'namespace {'.PHP_EOL.implode(PHP_EOL, $uses) . PHP_EOL, $code);
     }
 
     private function readCodeFromFile($file)
@@ -62,12 +64,19 @@ class Merger
     private function prepareNamespaces($code)
     {
         if (!preg_match('/namespace\s+(\w+);/i', $code, $matches)) {
+            if (false === $this->globalNsOpen){
+                $this->globalNsOpen = true;
+                return PHP_EOL. 'namespace {'.PHP_EOL.$code;
+            }
            return $code;
         }
 
         $ns = $matches[0];
+        $pre = true === $this->globalNsOpen ? PHP_EOL.'}'.PHP_EOL : '';
 
-        return str_replace(
+        $this->globalNsOpen = false;
+
+        return $pre . str_replace(
             $ns,
             substr($ns, 0, strlen($ns)-1) . ' {',
             $code
