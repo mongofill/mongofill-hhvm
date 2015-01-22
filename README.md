@@ -1,7 +1,7 @@
-Mongofill for HHVM
-==============================
+Mongofill for HHVM [![Build Status](https://travis-ci.org/mongofill/mongofill-hhvm.svg?branch=master)](https://travis-ci.org/mongofill/mongofill-hhvm)
+===================
 
-[![Build Status](https://travis-ci.org/mongofill/mongofill-hhvm.svg?branch=master)](https://travis-ci.org/mongofill/mongofill-hhvm)
+
 
 This package provides a drop-in replacement of the [official mongodb extension](https://github.com/mongodb/mongo-php-driver), as a HNI extension to be executed under HHVM runtime
 
