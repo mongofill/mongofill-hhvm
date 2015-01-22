@@ -1,0 +1,19 @@
+language: php
+
+php:
+    - hhvm
+
+services:
+  - mongodb
+
+cache:
+    directories:
+        - /hhvm-extensions
+
+install: /bin/bash tools/travis.sh
+
+before_script:
+    - cd vendor/mongofill/mongofill
+    - composer dump-autoload
+
+script: phpunit -v --debug
