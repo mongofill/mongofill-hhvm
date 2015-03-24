@@ -71,13 +71,29 @@ static String HHVM_FUNCTION(bson_encode_multiple, const Array& documents) {
 class mongoExtension : public Extension {
  public:
   mongoExtension() : Extension("mongo", "1.4.5") {}
+  
+  virtual void moduleLoad(const IniSetting::Map& ini, Hdf hdf) {
+    EnableApc = true;
+    auto ini_val = ini.get_ptr("apc.enable");
+    if (ini_val != nullptr) {
+      ini_on_update(*ini_val, EnableApc);
+    }
+  }
+  
   virtual void moduleInit() {
     HHVM_FE(bson_decode);
     HHVM_FE(bson_encode);
     HHVM_FE(bson_decode_multiple);
     HHVM_FE(bson_encode_multiple);
+
+#define C(name, value) Native::registerConstant<KindOfBoolean>(makeStaticString("MONGOFILL_" #name), (value))
+    C(USE_APC, EnableApc);
+#undef C
+
     loadSystemlib();
   }
+ private:
+  bool EnableApc; 
 } s_mongo_extension;
 
 // Uncomment for non-bundled module
