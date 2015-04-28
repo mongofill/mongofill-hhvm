@@ -1,4 +1,4 @@
-#include "hphp/runtime/base/base-includes.h"
+#include "hphp/runtime/ext/extension.h"
 #include <bson.h>
 #include "encode.h"
 #include "classes.h"
