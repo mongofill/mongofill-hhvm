@@ -1,4 +1,5 @@
 #include "hphp/runtime/ext/extension.h"
+#include "hphp/runtime/base/array-iterator.h"
 #include <bson.h>
 #include "encode.h"
 #include "classes.h"
