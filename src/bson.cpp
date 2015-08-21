@@ -75,7 +75,7 @@ class mongoExtension : public Extension {
   
   virtual void moduleLoad(const IniSetting::Map& ini, Hdf hdf) {
     EnableApc = true;
-    auto ini_val = ini.get_ptr("apc.enable");
+    auto ini_val = Config::Get(ini, hdf, "apc.enable");
     if (ini_val != nullptr) {
       ini_on_update(*ini_val, EnableApc);
     }
