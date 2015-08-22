@@ -149,12 +149,12 @@ void mongoCodeToBSON(const Object& value, const char* key, bson_t* bson) {
   bson_t child;
   bson_init(&child);
   fillBSONWithArray(
-    value->o_get("scope", true, s_MongoCode.get()).toArray(),
+    value->o_get("scope", true, String(s_MongoCode.get())).toArray(),
     &child 
   );
   
   bson_append_code_with_scope(bson, key, -1,
-    value->o_get("code", true, s_MongoCode.get()).toString().c_str(),
+    value->o_get("code", true, String(s_MongoCode.get())).toString().c_str(),
     &child
   );
 }

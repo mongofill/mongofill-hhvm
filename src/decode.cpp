@@ -157,7 +157,7 @@ static void bsonToObject(
 ) {
   output->add(
     String(bson_iter_key(iter)),
-    instanceNewObject(className, params)
+    Variant(instanceNewObject(className, params))
   );
 }
 
