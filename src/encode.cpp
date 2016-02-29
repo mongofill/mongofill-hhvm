@@ -29,7 +29,7 @@ void variantToBSON(const Variant& value, const char* key, bson_t* bson) {
     case KindOfDouble:
       doubleToBSON(value.toDouble(), key, bson);
       break;
-    case KindOfStaticString:
+    case KindOfPersistentString:
     case KindOfString:
       stringToBSON(value.toString(), key, bson);
       break;
