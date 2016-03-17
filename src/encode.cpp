@@ -4,6 +4,12 @@
 #include "encode.h"
 #include "classes.h"
 
+#if HHVM_VERSION_ID > ((3 << 16) | (12 << 8))
+  #define KindOfStaticString KindOfPersistentString
+#else
+  #define KindOfStaticString KindOfStaticString
+#endif
+
 namespace HPHP {
 void fillBSONWithArray(const Array& value, bson_t* bson) {
   for (ArrayIter iter(value); iter; ++iter) {
