@@ -4,6 +4,13 @@
 #include "encode.h"
 #include "classes.h"
 
+# if HHVM_VERSION_ID < 31201
+# define KindOfStaticString KindOfStaticString
+# else
+# define KindOfStaticString KindOfPersistentString
+#endif
+
+
 namespace HPHP {
 void fillBSONWithArray(const Array& value, bson_t* bson) {
   for (ArrayIter iter(value); iter; ++iter) {
