@@ -21,8 +21,28 @@ class Merger
     {
         $code = '';
 
+        $needed_first = array();
+        $file_names = array();
         foreach($files as $file) {
-            $code .= PHP_EOL . $this->readCodeFromFile($file);
+          $file_names[basename($file)] = $file;
+          $code = $this->readCodeFromFile($file);
+          if (preg_match('/extends\s+(\w+)\s+.*/i', $code, $match)) {
+             $needed_first[$match[1] . '.php'] = True;
+          }
+        }
+
+        print var_dump(array_keys($file_names));
+        foreach(array_keys($needed_first) as $basename) {
+          if (array_key_exists($basename, $file_names)) {
+              $code .= PHP_EOL . $this->readCodeFromFile(
+                $file_names[$basename]
+              );
+          }
+        }
+        foreach($files as $file) {
+            if (!array_key_exists(basename($file), $needed_first)) {
+              $code .= PHP_EOL . $this->readCodeFromFile($file);
+            }
         }
 
         return $code;
@@ -80,7 +100,7 @@ class Merger
             $ns,
             substr($ns, 0, strlen($ns)-1) . ' {',
             $code
-        ) . PHP_EOL . '}'; 
+        ) . PHP_EOL . '}';
     }
 
     private function findPHPFiles(array $paths)
@@ -113,7 +133,7 @@ class Merger
 }
 
 (new Merger(
-    ['src', 'vendor/mongofill/mongofill/src'], 
+    ['src', 'vendor/mongofill/mongofill/src'],
     ['vendor/mongofill/mongofill/src/functions.php'],
     'src/ext_mongo.php'
 ));
